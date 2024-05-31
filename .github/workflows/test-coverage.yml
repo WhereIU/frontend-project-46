@@ -1,0 +1,26 @@
+name: codeClimate test coverage
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  code-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: setup
+        run: make setup
+      - name: Test & publish code coverage
+         # Publish code coverage on Code Climate
+         # https://github.com/paambaati/codeclimate-action
+        uses: paambaati/codeclimate-action@v5.0.0
+         # Add Code Climate secret key
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+           coverageCommand: make test-coverage
+           debug: true

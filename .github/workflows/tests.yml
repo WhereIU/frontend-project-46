@@ -1,0 +1,26 @@
+name: code testing
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup
+        run: make setup
+      - name: linter
+        run: make lint
+
+  functional:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup
+        run: make setup
+      - name: jest tests
+        run: make test
+  
