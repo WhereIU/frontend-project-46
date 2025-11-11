@@ -21,9 +21,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-        run: make install
-        run: make lint
-        run: make test
+      - run: make install
+      - run: make lint
+      - run: make test
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
