@@ -1,5 +1,5 @@
-import parseFiles from './src/parsers.js';
+import formatDiff from './src/parsers.js';
 
-export default function parse(path1, path2) {
-  return parseFiles(path1, path2);
+export default function parse(path1, path2, format) {
+  return formatDiff(path1, path2, format);
 }
