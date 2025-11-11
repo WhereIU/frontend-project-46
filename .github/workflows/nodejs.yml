@@ -1,0 +1,32 @@
+name: Node CI
+on:
+  - push
+  - pull_request
+
+env:
+  CI: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x, 24.x]
+  
+    steps:
+      - uses: actions/checkout@v5
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+        run: make install
+        run: make lint
+        run: make test
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  
