@@ -12,5 +12,5 @@ lint-fix:
 test:
 	npx jest
 
-test-coverage:
+jest-coverage:
 	npx jest --coverage

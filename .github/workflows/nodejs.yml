@@ -24,6 +24,7 @@ jobs:
       - run: make install
       - run: make lint
       - run: make test
+      - run: make jest-coverage
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:

@@ -1,6 +1,5 @@
-import { fileURLToPath } from 'url';
-import path from 'node:path';
-import { dirname } from 'path';
+import { fileURLToPath } from 'node:url';
+import path, { dirname } from 'node:path';
 import fs from 'node:fs';
 import genDiff from '../index.js';
 
