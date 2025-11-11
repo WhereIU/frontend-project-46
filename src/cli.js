@@ -1,5 +1,5 @@
 import { program } from 'commander';
-import { jsonParser } from './parsers.js';
+import jsonParser from './parsers.js';
 
 program
   .name('gendiff')
