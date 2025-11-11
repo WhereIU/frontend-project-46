@@ -6,7 +6,7 @@ import yaml from 'js-yaml';
 const getFullPath = (filePath) => path.resolve(filePath);
 const stringify = (value, depth) => {
   if (!_.isObject(value)) {
-    return String(value)
+    return String(value);
   }
 
   const indent = ' '.repeat(depth * 4);
@@ -45,7 +45,7 @@ const parseData = (data1, data2, depth = 1) => {
 
     return [
       `${indent}- ${key}: ${stringify(val1, depth + 1)}`,
-      `${indent}+ ${key}: ${stringify(val2, depth + 1)}`
+      `${indent}+ ${key}: ${stringify(val2, depth + 1)}`,
     ].join('\n');
   });
 
