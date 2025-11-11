@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 const getFullPath = (filePath) => path.resolve(filePath);
 
-export const jsonParser = (filePath1, filePath2) => {
+const jsonParser = (filePath1, filePath2) => {
   const data1 = JSON.parse(
     fs.readFileSync(
       getFullPath(filePath1),
@@ -35,3 +35,4 @@ export const jsonParser = (filePath1, filePath2) => {
   return diff.join('\n');
 };
 
+export default jsonParser;

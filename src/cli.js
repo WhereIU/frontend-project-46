@@ -9,4 +9,4 @@ program
   .arguments('<filepath1> <filepath2>')
   .action((filePath1, filePath2) => console.log(jsonParser(filePath1, filePath2)));
 
-program.parse()
+program.parse();
