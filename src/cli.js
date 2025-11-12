@@ -1,5 +1,5 @@
-import { program } from 'commander';
-import formatDiff from './parsers.js';
+import { program } from 'commander'
+import formatDiff from './parsers.js'
 
 program
   .name('gendiff')
@@ -9,6 +9,6 @@ program
   .arguments('<filepath1> <filepath2>')
   .action(
     (filePath1, filePath2, { format }) => console.log(formatDiff(filePath1, filePath2, format)),
-  );
+  )
 
-program.parse();
+program.parse()
