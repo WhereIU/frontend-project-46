@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "bin": {
-    "cli": "bin/cli.js"
+    "genDiff": "bin/genDiff.js"
   },
   "scripts": {
     "test": "npx jest"

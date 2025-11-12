@@ -1,7 +1,16 @@
-setup: install
+setup: install +x-chmod publish link
 
 install:
 	npm ci
+
++x-chmod:
+	chmod +x bin/genDiff.js
+
+publish:
+	npm publish --dry-run
+
+link:
+	npm link
 
 lint:
 	npx eslint .
