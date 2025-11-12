@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const toString = (value) => (typeof value === 'string' ? `'${value}'` : String(value));
+const toString = (value, wrapper="'") => (typeof value === 'string' ? `${wrapper}${value}${wrapper}` : String(value));
 /* eslint-disable no-use-before-define */
 const formatObject = (obj, depth) => {
   const indent = ' '.repeat((depth + 1) * 2);
@@ -11,7 +11,7 @@ const formatObject = (obj, depth) => {
     const comma = i === entries.length - 1 ? '' : ',';
     if (_.isArray(v)) return `${indent}"${k}": ${formatArray(v, depth + 1)}${comma}`;
     if (_.isObject(v)) return `${indent}"${k}": ${formatObject(v, depth + 1)}${comma}`;
-    return `${indent}"${k}": ${toString(v)}${comma}`;
+    return `${indent}"${k}": ${toString(v, '"')}${comma}`;
   });
 
   return `{\n${lines.join('\n')}\n${closingIndent}}`;
@@ -25,7 +25,7 @@ const formatArray = (arr, depth) => {
     const comma = i === arr.length - 1 ? '' : ',';
     if (_.isArray(v)) return `${indent}${formatArray(v, depth + 1)}${comma}`;
     if (_.isObject(v)) return `${indent}${formatObject(v, depth + 1)}${comma}`;
-    return `${indent}${toString(v)}${comma}`;
+    return `${indent}${toString(v, '"')}${comma}`;
   });
 
   return [`\n${lines.join('\n')}\n${closingIndent}`];
@@ -119,7 +119,7 @@ export const json = (tree, depth = 0) => {
         if (_.isObject(v)) {
           return `${childIndent}"${node.key}": ${formatObject(v, depth + 1)}${comma}`;
         }
-        return `${childIndent}"${node.key}": ${toString(v)}${comma}`;
+        return `${childIndent}"${node.key}": ${toString(v, '"')}${comma}`;
       }
       case 'removed':
       default:
