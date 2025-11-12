@@ -99,38 +99,21 @@ export const plain = (tree, parent = '') => {
   return lines.join('\n');
 };
 
-export const json = (tree, depth = 0) => {
-  const indent = ' '.repeat(depth * 2);
-  const childIndent = ' '.repeat((depth + 1) * 2);
-
-  const lines = tree.flatMap((node, index, array) => {
-    const isLast = index === array.length - 1;
-    const comma = isLast ? '' : ',';
-    const key = String(node.key);
-
-    const formatNodeValue = (val, lvl) => {
-      if (_.isArray(val)) return formatArray(val, lvl);
-      if (_.isObject(val)) return formatObject(val, lvl);
-      return toString(val, '"');
-    };
-
+export const json = (tree) => {
+  const convertNode = (node) => {
     switch (node.type) {
       case 'nested':
-        return `${childIndent}"${key}": ${json(node.children, depth + 1)}${comma}`;
-
+        return { [node.key]: node.children.map(convertNode) };
       case 'added':
+      case 'updated':
       case 'unchanged':
-        return `${childIndent}"${key}": ${formatNodeValue(node.value, depth + 1)}${comma}`;
-
-      case 'updated': {
-        return `${childIndent}"${key}": ${formatNodeValue(node.newValue, depth + 1)}${comma}`;
-      }
-
+        return { [node.key]: node.value ?? node.newValue };
       case 'removed':
       default:
-        return [];
+        return null;
     }
-  });
+  };
 
-  return `{\n${lines.join('\n')}\n${indent}}`;
+  const obj = Object.assign({}, ...tree.map(convertNode).filter(Boolean));
+  return JSON.stringify(obj, null, 2);
 };
