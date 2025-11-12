@@ -8,10 +8,11 @@ const formatObject = (obj, depth) => {
 
   const entries = Object.entries(obj);
   const lines = entries.map(([k, v], i) => {
+    const stricktK = String(k)
     const comma = i === entries.length - 1 ? '' : ',';
-    if (_.isArray(v)) return `${indent}"${k}": ${formatArray(v, depth + 1)}${comma}`;
-    if (_.isObject(v)) return `${indent}"${k}": ${formatObject(v, depth + 1)}${comma}`;
-    return `${indent}"${k}": ${toString(v, '"')}${comma}`;
+    if (_.isArray(v)) return `${indent}"${stricktK}": ${formatArray(v, depth + 1)}${comma}`;
+    if (_.isObject(v)) return `${indent}"${stricktK}": ${formatObject(v, depth + 1)}${comma}`;
+    return `${indent}"${stricktK}": ${toString(v, '"')}${comma}`;
   });
 
   return `{\n${lines.join('\n')}\n${closingIndent}}`;
@@ -105,21 +106,21 @@ export const json = (tree, depth = 0) => {
   const lines = tree.flatMap((node, index, array) => {
     const isLast = index === array.length - 1;
     const comma = isLast ? '' : ',';
-
+    const key = String(node.key)
     switch (node.type) {
       case 'nested':
-        return `${childIndent}"${node.key}": ${json(node.children, depth + 1)}${comma}`;
+        return `${childIndent}"${key}": ${json(node.children, depth + 1)}${comma}`;
       case 'added':
       case 'updated':
       case 'unchanged': {
         const v = node.value ?? node.newValue;
         if (_.isArray(v)) {
-          return `${childIndent}"${node.key}": ${formatArray(v, depth + 1)}${comma}`;
+          return `${childIndent}"${key}": ${formatArray(v, depth + 1)}${comma}`;
         }
         if (_.isObject(v)) {
-          return `${childIndent}"${node.key}": ${formatObject(v, depth + 1)}${comma}`;
+          return `${childIndent}"${key}": ${formatObject(v, depth + 1)}${comma}`;
         }
-        return `${childIndent}"${node.key}": ${toString(v, '"')}${comma}`;
+        return `${childIndent}"${key}": ${toString(v, '"')}${comma}`;
       }
       case 'removed':
       default:
