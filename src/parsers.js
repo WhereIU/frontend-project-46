@@ -47,7 +47,7 @@ const formatDiff = (filePath1, filePath2, format) => {
   });
 
   const diffTree = parseData(data1, data2);
-  const normalizedFormat = format.toLowerCase().trim();
+  const normalizedFormat = format?.toLowerCase().trim();
   switch (normalizedFormat) {
     case 'stylish':
       return formatter.stylish(diffTree);
@@ -56,7 +56,7 @@ const formatDiff = (filePath1, filePath2, format) => {
     case 'json':
       return formatter.json(diffTree);
     default:
-      return `${format} format is unknown`;
+      return undefined;
   }
 };
 export default formatDiff;
