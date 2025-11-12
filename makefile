@@ -4,7 +4,7 @@ install:
 	npm ci
 
 +x-chmod:
-	chmod +x bin/genDiff.js
+	chmod +x bin/gen-diff.js
 
 publish:
 	npm publish --dry-run
