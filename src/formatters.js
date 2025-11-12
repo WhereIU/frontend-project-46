@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const toString = (value, wrapper="'") => (typeof value === 'string' ? `${wrapper}${value}${wrapper}` : String(value));
+const toString = (value, wrapper = "'") => (typeof value === 'string' ? `${wrapper}${value}${wrapper}` : String(value));
 /* eslint-disable no-use-before-define */
 const formatObject = (obj, depth) => {
   const indent = ' '.repeat((depth + 1) * 2);
@@ -8,7 +8,7 @@ const formatObject = (obj, depth) => {
 
   const entries = Object.entries(obj);
   const lines = entries.map(([k, v], i) => {
-    const stricktK = String(k)
+    const stricktK = String(k);
     const comma = i === entries.length - 1 ? '' : ',';
     if (_.isArray(v)) return `${indent}"${stricktK}": ${formatArray(v, depth + 1)}${comma}`;
     if (_.isObject(v)) return `${indent}"${stricktK}": ${formatObject(v, depth + 1)}${comma}`;
@@ -106,22 +106,26 @@ export const json = (tree, depth = 0) => {
   const lines = tree.flatMap((node, index, array) => {
     const isLast = index === array.length - 1;
     const comma = isLast ? '' : ',';
-    const key = String(node.key)
+    const key = String(node.key);
+
+    const formatNodeValue = (val, lvl) => {
+      if (_.isArray(val)) return formatArray(val, lvl);
+      if (_.isObject(val)) return formatObject(val, lvl);
+      return toString(val, '"');
+    };
+
     switch (node.type) {
       case 'nested':
         return `${childIndent}"${key}": ${json(node.children, depth + 1)}${comma}`;
+
       case 'added':
-      case 'updated':
-      case 'unchanged': {
-        const v = node.value ?? node.newValue;
-        if (_.isArray(v)) {
-          return `${childIndent}"${key}": ${formatArray(v, depth + 1)}${comma}`;
-        }
-        if (_.isObject(v)) {
-          return `${childIndent}"${key}": ${formatObject(v, depth + 1)}${comma}`;
-        }
-        return `${childIndent}"${key}": ${toString(v, '"')}${comma}`;
+      case 'unchanged':
+        return `${childIndent}"${key}": ${formatNodeValue(node.value, depth + 1)}${comma}`;
+
+      case 'updated': {
+        return `${childIndent}"${key}": ${formatNodeValue(node.newValue, depth + 1)}${comma}`;
       }
+
       case 'removed':
       default:
         return [];
