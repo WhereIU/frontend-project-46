@@ -18,7 +18,7 @@ function compare(filesExtention, format) {
 
 describe('genDiff', () => {
   const fileFormats = ['json', 'yml'];
-  const outputFormats = ['stylish', 'plain'];
+  const outputFormats = ['stylish', 'plain', 'json'];
 
   const testFactory = (fileType, outputFormat) => {
     test(`genDiff ${fileType} files with ${outputFormat} format`, () => {

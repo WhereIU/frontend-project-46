@@ -1,11 +1,40 @@
 import _ from 'lodash';
 
 const toString = (value) => (typeof value === 'string' ? `'${value}'` : String(value));
+/* eslint-disable no-use-before-define */
+const formatObject = (obj, depth) => {
+  const indent = ' '.repeat((depth + 1) * 2);
+  const closingIndent = ' '.repeat(depth * 2);
+
+  const entries = Object.entries(obj);
+  const lines = entries.map(([k, v], i) => {
+    const comma = i === entries.length - 1 ? '' : ',';
+    if (_.isArray(v)) return `${indent}"${k}": ${formatArray(v, depth + 1)}${comma}`;
+    if (_.isObject(v)) return `${indent}"${k}": ${formatObject(v, depth + 1)}${comma}`;
+    return `${indent}"${k}": ${toString(v)}${comma}`;
+  });
+
+  return `{\n${lines.join('\n')}\n${closingIndent}}`;
+};
+
+const formatArray = (arr, depth) => {
+  const indent = ' '.repeat((depth + 1) * 2);
+  const closingIndent = ' '.repeat(depth * 2);
+
+  const lines = arr.map((v, i) => {
+    const comma = i === arr.length - 1 ? '' : ',';
+    if (_.isArray(v)) return `${indent}${formatArray(v, depth + 1)}${comma}`;
+    if (_.isObject(v)) return `${indent}${formatObject(v, depth + 1)}${comma}`;
+    return `${indent}${toString(v)}${comma}`;
+  });
+
+  return [`\n${lines.join('\n')}\n${closingIndent}`];
+};
+/* eslint-enable no-use-before-define */
 
 export const stylish = (tree, depth = 1) => {
   const indent = ' '.repeat(depth * 4 - 2);
   const bracketIndent = ' '.repeat((depth - 1) * 4);
-
   const formatValue = (val, lvl) => {
     if (!_.isObject(val)) return String(val);
     const entries = Object.entries(val)
@@ -18,7 +47,6 @@ export const stylish = (tree, depth = 1) => {
     const {
       key, type, value, oldValue, newValue, children,
     } = node;
-
     switch (type) {
       case 'nested':
         return `${' '.repeat(depth * 4)}${key}: ${stylish(children, depth + 1)}`;
@@ -53,7 +81,6 @@ export const plain = (tree, parent = '') => {
         const value = _.isObject(node.value) ? '[complex value]' : toString(node.value);
         return `Property '${propertyPath}' was added with value: ${value}`;
       }
-
       case 'removed':
         return `Property '${propertyPath}' was removed`;
 
@@ -62,7 +89,6 @@ export const plain = (tree, parent = '') => {
         const newVal = _.isObject(node.newValue) ? '[complex value]' : toString(node.newValue);
         return `Property '${propertyPath}' was updated. From ${oldVal} to ${newVal}`;
       }
-
       case 'unchanged':
       default:
         return [];
@@ -70,4 +96,36 @@ export const plain = (tree, parent = '') => {
   });
 
   return lines.join('\n');
+};
+
+export const json = (tree, depth = 0) => {
+  const indent = ' '.repeat(depth * 2);
+  const childIndent = ' '.repeat((depth + 1) * 2);
+
+  const lines = tree.flatMap((node, index, array) => {
+    const isLast = index === array.length - 1;
+    const comma = isLast ? '' : ',';
+
+    switch (node.type) {
+      case 'nested':
+        return `${childIndent}"${node.key}": ${json(node.children, depth + 1)}${comma}`;
+      case 'added':
+      case 'updated':
+      case 'unchanged': {
+        const v = node.value ?? node.newValue;
+        if (_.isArray(v)) {
+          return `${childIndent}"${node.key}": ${formatArray(v, depth + 1)}${comma}`;
+        }
+        if (_.isObject(v)) {
+          return `${childIndent}"${node.key}": ${formatObject(v, depth + 1)}${comma}`;
+        }
+        return `${childIndent}"${node.key}": ${toString(v)}${comma}`;
+      }
+      case 'removed':
+      default:
+        return [];
+    }
+  });
+
+  return `{\n${lines.join('\n')}\n${indent}}`;
 };

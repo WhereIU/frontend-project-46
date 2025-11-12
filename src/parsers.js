@@ -11,7 +11,6 @@ const parseData = (data1, data2) => {
   return keys.map((key) => {
     const val1 = data1[key];
     const val2 = data2[key];
-
     if (_.isObject(val1) && _.isObject(val2)) {
       return { key, type: 'nested', children: parseData(val1, val2) };
     }
@@ -26,6 +25,7 @@ const parseData = (data1, data2) => {
         key, type: 'updated', oldValue: val1, newValue: val2,
       };
     }
+
     return { key, type: 'unchanged', value: val1 };
   });
 };
@@ -47,11 +47,14 @@ const formatDiff = (filePath1, filePath2, format) => {
   });
 
   const diffTree = parseData(data1, data2);
-  switch (format) {
+  const normalizedFormat = format.toLowerCase().trim();
+  switch (normalizedFormat) {
     case 'stylish':
       return formatter.stylish(diffTree);
     case 'plain':
       return formatter.plain(diffTree);
+    case 'json':
+      return formatter.json(diffTree);
     default:
       return `${format} format is unknown`;
   }
