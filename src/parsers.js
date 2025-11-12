@@ -30,7 +30,7 @@ const parseData = (data1, data2) => {
   });
 };
 
-const formatDiff = (filePath1, filePath2, format) => {
+const formatDiff = (filePath1, filePath2, format = 'stylish') => {
   const [data1, data2] = [filePath1, filePath2].map((filePath) => {
     const extension = filePath.split('.').at(-1);
     const rawData = fs.readFileSync(
